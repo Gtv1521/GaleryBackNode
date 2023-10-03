@@ -1,0 +1,13 @@
+
+POST http://localhost:5000/auth
+Content-Type: application/json
+
+{ "nombre": "pascal", "password": "32123" }
+
+### 
+GET http://localhost:5000/users
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTYyNTc0NTUsImV4cCI6MTY5NjI2MTA1NX0.p9Q8j60qeWShyu1z2MtdNg-yKCNBnjUCpb472ccoAtA
+
+###
+
+DELETE http://localhost:5000/users/16

@@ -1,14 +1,13 @@
 // importamos las librerias de uso para la app 
-import mysql from './mysql'
+import mysql from 'mysql2'
 import { promisify } from 'util'
 
 // hacemos llamado a los datos de llave de la base 
-import { database } from './llave'
-
+import  database  from './llave.js'
 
 const pool = mysql.createPool(database)
 // creamos la conexion a la base
-pool.createConnection((err, connection) => {
+pool.getConnection((err, connection) => {
     if (err) {
         // si nos da error que lo espesifique
         if (err.code === 'PROTOCOL_CONNECTION_LOST') {
@@ -24,12 +23,13 @@ pool.createConnection((err, connection) => {
         }
     }
     // conexion exitosa con la base de datos
-    if (connection) connection.release();
+    if (connection){
+        connection.release();
+    } 
     console.log('Database is connected');
     return;
-
 });
 
 pool.query = promisify(pool.query);
 
-export default pool 
+export default pool; 
