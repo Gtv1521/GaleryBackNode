@@ -1,8 +1,7 @@
 // Librerias
 import express from 'express';
-import jwt from 'jsonwebtoken';
 
-// Archivos importados de la app
+// componentes de aplicación
 import pool from '../../config/dataBaseConect.js';
 import { verifyToken } from '../helpers/acessToken.js';
 
@@ -19,7 +18,7 @@ router.get('/image/:id', verifyToken, async (req, res, next) => {
         if (consutaImagenes.length !== 0) {
         res.json(consutaImagenes);
         }else{
-            res.json({message: 'No hay imagenes'});
+            res.json({message: 'No hay imagenes para mostrar'});
         }
     } catch (error) {
         res.send(error);
@@ -41,11 +40,8 @@ router.post('/image', verifyToken, async (req, res) => {
         const imagenConsulta = await pool.query('insert into imegenes values (?,?,?,?)', [name_img, description_img, url_img, username]);
         res.json(imagenConsulta);
     } catch (err) {
-        res.send(err);
-        console.log(err);
+
     }
 });
-
-
 
 export default router;

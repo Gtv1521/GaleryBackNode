@@ -1,3 +1,4 @@
+// componentes de aplicación
 import pool from '../../config/dataBaseConect.js';
 
 // consultar todos los Usuarios
@@ -10,6 +11,17 @@ const consultaUsers = async (req, res) => {
     }
 }
 
+//actualizar datos personales de usuario 
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, username, email } = req.body;
+
+
+    } catch (error) {
+        res.json({ error: 'User not found' });
+    }
+}
 
 // eliminar un usuario
 const deleteUser = async (req, res) => {
@@ -26,4 +38,8 @@ const deleteUser = async (req, res) => {
     }
 }
 
-export { consultaUsers, deleteUser }
+const updatePassword = async (req, res) => {
+
+}
+
+export { consultaUsers, deleteUser, updateUser, updatePassword }

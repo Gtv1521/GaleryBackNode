@@ -1,9 +1,15 @@
+// componentes de aplicación
 import pool from "../../config/dataBaseConect.js";
 import { encrypt, comparar } from '../helpers/encriptado.js';
 import { genereAcessToken } from '../helpers/acessToken.js';
 
+// verifica Username en DB
 const verifyUsername = async (username) => {
     return await pool.query(`select * from User where userName = ?`, username);
+};
+// verifica email en DB
+const verifyEmail = async (email) => {
+    return await pool.query(`select * from User where email = ?`, email);
 };
 
 // registra un usuario
@@ -13,28 +19,32 @@ const logIn = async (req, res) => {
         const passEncript = await encrypt(password);
 
         const exitUsername = await verifyUsername(username);
+        const exitEmail = await verifyEmail(email);
         if (exitUsername.length === 0) {
-            const insertUser = await pool.query(`insert into 
+            if (exitEmail.length === 0) {
+                const insertUser = await pool.query(`insert into 
                 User (nombre, username, email, password) 
                 values (?, ?, ?, ?)`,
-                [nombre, username, email, passEncript]);
+                    [nombre, username, email, passEncript]);
 
-            if (insertUser.serverStatus === 2) {
-                res.json({
-                    id: insertUser.insertId, nombre: nombre,
-                    password: password, username: username,
-                    email: email, message: 'Nuevo usuario agregado'
-                });
+                if (insertUser.serverStatus === 2) {
+                    res.json({
+                        id: insertUser.insertId, nombre: nombre,
+                        password: password, username: username,
+                        email: email, message: 'Nuevo usuario agregado'
+                    });
+                } else {
+                    res.send('Error al insertar usuario')
+                }
             } else {
-                res.send('Error al insertar usuario')
+                res.json({ message: 'email es del usuario: ' + exitEmail[0].userName });
             }
         } else {
-            res.json({ status: 404, message: 'Username exist for other user' })
+            res.status(404).json({ message: 'Username exist for other user' })
         }
     } catch (error) {
-        res.json({ error: 'Algo fallo' });
+        res.status(404).json({ message: error.message });
     }
-
 };
 
 // inicia sesion y crea token
@@ -52,15 +62,13 @@ const sigIn = async (req, res) => {
                 token: accessToken
             });
         } else {
-            res.send({ status: 404, message: 'Datos no coinciden' });
+            res.status(404).json({ message: 'Datos no coinciden' });
         }
 
     } catch (error) {
-        res.json({
-            error: 'Algo salio mal'
-        })
+        res.status(404).json({ error: error.message })
     }
 };
 
-export { logIn, sigIn }
+export { logIn, sigIn, verifyEmail }
 

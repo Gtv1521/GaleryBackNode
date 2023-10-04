@@ -1,3 +1,4 @@
+// Librerias
 import dotenv from 'dotenv'; // muestra las variables globales de la application
 import express from 'express';
 import morgan from 'morgan'; //muestra las peticiones hechas al servidior y la respuesta de peticion 
@@ -6,7 +7,8 @@ import cors from 'cors'; //
 
 
 // Initialitation
-const app = express(); dotenv.config();
+const app = express(); 
+dotenv.config();
 
 // settings
 app.set('port', process.env.PORT || 3000);
