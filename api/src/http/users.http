@@ -1,13 +1,25 @@
 
-POST http://localhost:5000/auth
+POST http://localhost:5000/sigin
 Content-Type: application/json
 
-{ "nombre": "pascal", "password": "32123" }
+{ "username": "GustavoBernal", "password": "123" }
 
 ### 
 GET http://localhost:5000/users
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTYyNTc0NTUsImV4cCI6MTY5NjI2MTA1NX0.p9Q8j60qeWShyu1z2MtdNg-yKCNBnjUCpb472ccoAtA
 
 ###
-
 DELETE http://localhost:5000/users/16
+
+###
+PUT http://localhost:5000/updatePassword/28
+Content-Type: application/json
+
+{
+    "nombre": "Gustavo",
+    "username":"GTV_129",
+    "email": "gustavo@gmail.com"
+}
+###
+POST http://localhost:5000/addImage/33
+name_img, description_img, url_img, id

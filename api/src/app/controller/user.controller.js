@@ -17,9 +17,14 @@ const updateUser = async (req, res) => {
         const { id } = req.params;
         const { nombre, username, email } = req.body;
 
+        const updateUser = await pool.query(`update User 
+            nombre = ?, userName = ?, email = ? where  id = ?`,
+            [nombre, username, email, id]);
+
+        res.json(updateUser, { message: 'User updated' });
 
     } catch (error) {
-        res.json({ error: 'User not found' });
+        res.status(404).json({ error: error.message });
     }
 }
 
@@ -38,8 +43,23 @@ const deleteUser = async (req, res) => {
     }
 }
 
+// 
 const updatePassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, username, email } = req.body;
+        console.log(nombre, username, email);
 
+        if (!nombre || !username || !email) {
+            res.status(404).json({ message: 'Datos incompletos' });
+        } else {
+            const datos = { nombre, userName: username, email };
+            const updateUser = await pool.query(`update User set ? where id = ?`, [datos, id]);
+            res.json({ updateUser, message: 'user updated successfully' });
+        }
+    } catch (error) {
+        res.status(404).json({ code: error.code, sql: error.sql, messagge: error.message });
+    }
 }
 
 export { consultaUsers, deleteUser, updateUser, updatePassword }

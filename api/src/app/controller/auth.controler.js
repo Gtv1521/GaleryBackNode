@@ -70,5 +70,5 @@ const sigIn = async (req, res) => {
     }
 };
 
-export { logIn, sigIn, verifyEmail }
+export { logIn, sigIn, verifyEmail, verifyUsername }
 

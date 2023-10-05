@@ -10,14 +10,17 @@ const verifyToken = (req, res, next) => {
 
     try {
         const Token = req.headers['authorization'] || req.query.access_token;
-        if (!Token) res.send('Access denied');
-        jwt.verify(Token, process.env.SECRET, (err, user) => {
-            if (err) {
-                res.send('access denied, token expired or incorrect');
-            } else {
-                next();
-            }
-        })
+        if (!Token){
+            res.send('Access denied');
+        }else{
+            jwt.verify(Token, process.env.SECRET, (err, user) => {
+                if (err) {
+                    res.send('access denied, token expired or incorrect');
+                } else {
+                    next();
+                }
+            })
+        }
     } catch (Error) {
         res.send(Error);
     }
