@@ -1,4 +1,5 @@
 {
     "window.autoDetectColorScheme": false,
-    "editor.fontFamily": "FiraCode Nerd Font Mono, 'Droid Sans Mono', 'monospace', monospace"
+    "editor.fontFamily": "FiraCode Nerd Font Mono, 'Droid Sans Mono', 'monospace', monospace",
+    "git.ignoreLimitWarning": true
 }
