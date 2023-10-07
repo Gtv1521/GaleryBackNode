@@ -1,11 +1,16 @@
+// librerias 
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv'
 
+// Inicializando estancias 
 dotenv.config();
+
+// Crea el access token
 const genereAcessToken = (user) => {
-    return jwt.sign(user, process.env.SECRET, { expiresIn: '60m' });
+    return jwt.sign(user, process.env.SECRET, { expiresIn: '6h' });
 };
 
+// verifica que el token exista y sea activo
 const verifyToken = (req, res, next) => {
 
     try {

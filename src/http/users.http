@@ -21,5 +21,11 @@ Content-Type: application/json
     "email": "gustavo@gmail.com"
 }
 ###
-POST http://localhost:5000/addImage/33
-name_img, description_img, url_img, id
+PUT  http://localhost:5000/uploadImage/37
+
+Content-Type: application/json
+
+{
+    "name_img": "GTV_129"
+}
+

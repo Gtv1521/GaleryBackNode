@@ -1,10 +1,10 @@
 // Librerias
 import express from 'express';
+import fileUpload from 'express-fileupload'; // se usa para poder ruta a una imagen
 
 // componentes de aplicación
-import pool from '../../config/dataBaseConect.js';
 import { verifyToken } from '../helpers/acessToken.js';
-import { addImage, deleteImagen, verImage } from '../controller/imagenes.cotroller.js';
+import { addImage, deleteImagen, verImage, verImagenesId, updateImage } from '../controller/imagenes.cotroller.js';
 
 
 // Inicialitation Rutas
@@ -12,28 +12,31 @@ const router = express.Router();
 
 
 // UTILIZANDO RUTAS Y CONSULTAS
-// Consulta todas las imagenes
-router.get('/images', verifyToken, async (req, res, next) => {
-    try {
-        const consutaImagenes = await pool.query(`select * from imagenes`);
-        if (consutaImagenes.length !== 0) {
-            res.json(consutaImagenes);
-        } else {
-            res.json({ message: 'No hay imagenes para mostrar' });
-        }
-    } catch (error) {
-        res.send(error);
-        res.json({ error: error.message });
-    }
-});
+// Consulta todas las imagenes de un usuario
+router.get('/verImagesId/:id', verImagenesId);
 
 // Consulta una imagen
 router.get('/verImage/:id', verifyToken, verImage);
 
 // inserta una imagen 
-router.post('/addImage/:id',verifyToken, addImage);
+router.post('/addImage/:id', verifyToken, fileUpload({
+    useTempFiles: true,
+    tempFileDir: './src/uploads'
+}), addImage);
 
 // borrar imagen
-router.delete('/deleteImage/:id', deleteImagen)
+router.delete('/deleteImage/:id', verifyToken, deleteImagen);
+
+// actualiza image
+router.put('/updateImage/:id', async (req, res, next) => {
+    try {
+        const { name_img, description_img, album } = req.body;
+        console.log(name_img, description_img, album);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 
 export default router;

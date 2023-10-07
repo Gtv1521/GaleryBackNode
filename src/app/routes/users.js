@@ -17,7 +17,7 @@ router.get('/users', verifyToken, consultaUsers);
 router.put('/updateUser/:id', verifyToken, updateUser);
 
 // actualiza contraseña
-router.put('/updatePassword/:id', updatePassword);
+router.put('/updatePassword/:id', verifyToken, updatePassword);
 
 // elimina usuario
 router.delete('/deleteUser/:id', verifyToken, deleteUser);

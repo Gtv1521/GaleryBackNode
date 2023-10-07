@@ -5,15 +5,15 @@ import { genereAcessToken } from '../helpers/acessToken.js';
 
 // verifica Username en DB
 const verifyUsername = async (username) => {
-    return await pool.query(`select * from User where userName = ?`, username);
+    return await pool.query(`select * from User where userName = ?`, [username]);
 };
 // verifica email en DB
 const verifyEmail = async (email) => {
-    return await pool.query(`select * from User where email = ?`, email);
+    return await pool.query(`select * from User where email = ?`, [email]);
 };
 // verifica que el usuario exista
 const verifyId = async (id) => {
-    return await pool.query(`select * from User where id = ?`, id);
+    return await pool.query(`select * from User where id = ?`, [id]);
 };
 
 // registra un usuario
@@ -27,16 +27,22 @@ const logIn = async (req, res) => {
         if (exitUsername.length === 0) {
             if (exitEmail.length === 0) {
                 const insertUser = await pool.query(`insert into 
-                User (nombre, username, email, password) 
+                User (nombre, userName, email, password) 
                 values (?, ?, ?, ?)`,
                     [nombre, username, email, passEncript]);
 
                 if (insertUser.serverStatus === 2) {
-                    res.json({
+                    const user = { username: username, user_id: insertUser.insertId, 
+                                    email: email, nombre: nombre }
+                    const accessToken = genereAcessToken(user);
+                    res.header('Authorization', accessToken).json({         
                         id: insertUser.insertId, nombre: nombre,
                         password: password, username: username,
-                        email: email, message: 'Nuevo usuario agregado'
+                        email: email, message: 'Nuevo usuario agregado',
+                        message: 'User authenticated',
+                        token: accessToken
                     });
+
                 } else {
                     res.send('Error al insertar usuario')
                 }

@@ -1,19 +1,16 @@
-exports.options = {
-    routePrefix: '/documentation',
-    exposeRoute: true,
-    swagger: {
-      info: {
-        title: 'Fastify API',
-        description: 'Building a blazing fast REST API with Node.js, MongoDB, Fastify and Swagger',
-        version: '1.0.0'
-      },
-      externalDocs: {
-        url: 'https://swagger.io',
-        description: 'Find more info here'
-      },
-      host: 'localhost',
-      schemes: ['http'],
-      consumes: ['application/json'],
-      produces: ['application/json']
-    }
-  }
+export const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "API Rest Galery",
+      version: "1.0.0",
+      description: "API documentation express server"
+    },
+    servers: [
+      {
+        url: "https://localhost:5000",
+      }
+    ]
+  },
+  apis: ["src/app/routes/*.js"]
+}
