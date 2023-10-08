@@ -87,6 +87,7 @@ const sigIn = async (req, res) => {
       username,
       password
     } = req.body;
+    console.log(req.body);
     const verifyPass = await verifyUsername(username);
     const checkPass = await (0, _encriptado.comparar)(password, verifyPass[0].password);
     const {

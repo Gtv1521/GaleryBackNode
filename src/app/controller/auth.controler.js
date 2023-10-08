@@ -61,6 +61,7 @@ const logIn = async (req, res) => {
 const sigIn = async (req, res) => {
     try {
         const { username, password } = req.body;
+        console.log(req.body);
         const verifyPass = await verifyUsername(username);
         const checkPass = await comparar(password, verifyPass[0].password);
         const { nombre, id, email } = verifyPass[0];
