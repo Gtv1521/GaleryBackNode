@@ -15,19 +15,19 @@ const verifyToken = (req, res, next) => {
 
     try {
         const Token = req.headers['authorization'] || req.query.access_token;
-        if (!Token){
-            res.send('Access denied');
-        }else{
+        if (!Token) {
+            res.status(401).send('Access denied');
+        } else {
             jwt.verify(Token, process.env.SECRET, (err, user) => {
                 if (err) {
-                    res.send('access denied, token expired or incorrect');
+                    res.status(405).send('access denied, token expired or incorrect');
                 } else {
                     next();
                 }
             })
         }
     } catch (Error) {
-        res.send(Error);
+        res.status(404).send(Error);
     }
 };
 

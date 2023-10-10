@@ -2,7 +2,7 @@
 POST http://localhost:5000/sigin
 Content-Type: application/json
 
-{ "username": "GustavoBernal", "password": "123" }
+{ "username": "Gustavo123", "password": "Ilovereggae.17" }
 
 ### 
 GET http://localhost:5000/users
