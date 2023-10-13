@@ -1,24 +1,34 @@
 
-POST http://localhost:5000/sigin
-Content-Type: application/json
-
-{ "username": "Gustavo123", "password": "Ilovereggae.17" }
-
-### 
 GET http://localhost:5000/users
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTYyNTc0NTUsImV4cCI6MTY5NjI2MTA1NX0.p9Q8j60qeWShyu1z2MtdNg-yKCNBnjUCpb472ccoAtA
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5NzEyNTc5OCwiZXhwIjoxNjk3MTQ3Mzk4fQ.TmnuN7Onkz2Eg_irlrB1mL1NglA3wIs-ZzJw-kB0sYo
+
 
 ###
-DELETE http://localhost:5000/users/16
+DELETE http://localhost:5000/deleteUser/41
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5NzA3OTE1NywiZXhwIjoxNjk3MTAwNzU3fQ.2a_jK1ybkdX8mpwkLC6-U7eeMZrHY8BkNlhmMhPuk70 
+
 
 ###
-PUT http://localhost:5000/updatePassword/28
+PUT http://localhost:5000/updateUser/39
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5NzA3OTE1NywiZXhwIjoxNjk3MTAwNzU3fQ.2a_jK1ybkdX8mpwkLC6-U7eeMZrHY8BkNlhmMhPuk70
 Content-Type: application/json
 
 {
     "nombre": "Gustavo",
     "username":"GTV_129",
     "email": "gustavo@gmail.com"
+}
+
+
+###
+PUT  http://localhost:5000/updatePassword/43
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5NzEyNTc5OCwiZXhwIjoxNjk3MTQ3Mzk4fQ.TmnuN7Onkz2Eg_irlrB1mL1NglA3wIs-ZzJw-kB0sYo
+
+Content-Type: application/json
+
+{
+    "password_antiguio": "Ilovereggae.17",
+    "password_nuevo": "User.1234"
 }
 ###
 PUT  http://localhost:5000/uploadImage/37

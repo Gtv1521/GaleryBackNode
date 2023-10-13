@@ -3,7 +3,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 // Estancias de la app
-import { sigIn, logIn } from '../controller/auth.controler.js';
+import { sigIn, logIn, sendEmail, passNew } from '../controller/auth.controller.js';
+import { verifyToken } from '../helpers/acessToken.js';
 
 // iniciando estancias
 const router = express.Router();
@@ -250,5 +251,21 @@ router.post('/login', logIn);
  *                     messagge: Datos no coinciden                         
  */
 router.post('/sigin', sigIn);
+
+// new password
+router.post('/emailPass', sendEmail);
+
+router.get('/newPassword/:token/:id', async (req, res) => {
+    const { token, id } = req.params;
+    res.send(`
+        <form action="/newPassword/${id}?access_token=${token}" method="POST" id="formUser">
+             <input type="password" name="password" placeholder="password">
+             <input type="password" name="confirPass" placeholder="confirm">
+             <input type="submit" value="Enviar">
+         </form>
+   `)
+})
+// valida el nuevo password y lo agrega a la base
+router.post('/newPassword/:id', verifyToken, passNew);
 
 export default router;

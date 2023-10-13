@@ -25,9 +25,64 @@ const router = express.Router();
  * @swagger
  * components:
  *  schemas:
- *    ErrorAuth:
- *     '401':    # status code 
- *        description: Access denied   
+ *    Okay:
+ *      type: array
+ *      items: 
+ *       type: object
+ *       properties:
+ *         status: 
+ *            type: integer
+ *            description: respuesta de estado ok
+ *         respuesta:
+ *            type: object
+ *            description: consulta de usuario eliminado  
+ *            properties:
+ *              id: 
+ *                type: integer
+ *                description: id user
+ *              nombre: 
+ *                type: string
+ *                description: nombre user
+ *              username: 
+ *                type: string
+ *                description: username of user
+ *              password: 
+ *                type: string
+ *                description: password of user
+ *              email: 
+ *                type: string
+ *                description: email of user
+ *         message: 
+ *           type: string
+ *           description: descripcion del message 
+ *    Error:
+ *      type: array
+ *      items: 
+ *       type: object
+ *       properties:
+ *         error: 
+ *           type: string
+ *           description: descripcion del error 
+ *    Usuario:
+ *      type: array
+ *      items: 
+ *        type: object
+ *        properties:
+ *           id: 
+ *             type: integer
+ *             description: id user
+ *           nombre: 
+ *             type: string
+ *             description: nombre user
+ *           username: 
+ *             type: string
+ *             description: username of user
+ *           password: 
+ *             type: string
+ *             description: password of user
+ *           email: 
+ *             type: string
+ *             description: email of user
  */
 
 /**
@@ -47,20 +102,37 @@ const router = express.Router();
  *   tags: [Users]    
  *   description: Peticion para mostrar usuarios
  *   responses:
+
  *     '200':    # status code
- *        description: Usuario creado satisfactoriamente 
+ *        description: Lista de usuarios
  *        content:
- *           application/json:
- *             schema: 
- *               type: array
- *               items:
- *                 nombre:
- *                   type: string
- *                   description: contiene el nombre de usuario   
- *               example:
- *                 nombre: Gustao Bernal                   
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Usuario'
+ *           example:
+ *             id: 36
+ *             nombre: Gustavo
+ *             username: Gustavo123
+ *             password: $2a$10$Fj5GVZ0b0y8sKK5fxpR.fuPzycOXt6HN23FgbrY2sGzDdsugoHEka
+ *             email: gustavober98@gmail.com
+ * 
+ *
  *     '404':    # status code 
- *        description: no hay usuarios                            
+ *        description: no hay usuarios  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: Not found     
+ *     '401':    # status code 
+ *        description:  pasar token de acceso  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: Access denied                               
  */
 router.get('/users', verifyToken, consultaUsers);
 
@@ -73,10 +145,67 @@ router.get('/users', verifyToken, consultaUsers);
  *    security:
  *      - ApiKeyAuth: [] 
  *    tags: [Users]
- */
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: integer
+ *          format: int64
+ * 
+ *    requestBody:
+ *      required: true
+ *      description: pase los datos de usuario a actualizar por medio del objeto.
+ *      content:
+ *        application/json:
+ *          schema:    
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                nombre: 
+ *                  type: string
+ *                  description: nombre de suario
+ *                username: 
+ *                  type: string
+ *                  description: nombre unico de suario 
+ *                email: 
+ *                  type: string
+ *                  description: email unico de suario
+ *              example:
+ *                nombre: Gus Bernal
+ *                username: gtv.312
+ *                email: gus@correo.com
+ *    responses:
+ *      200:
+ *        description:  Datos de usuario actualizados
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Okay'
+ *           example:
+ *             
+ *                      
+ *      401:    # status code 
+ *        description:  Pasar token de acceso  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: Access denied     
+ *      404: 
+ *        description: Error Not Found
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: Inserte todos los datos   
+*/   
 router.put('/updateUser/:id', verifyToken, updateUser);
 
-// actualiza contraseña
+// actualiza contraseña   
 /**
  * @swagger
  * /updatePassword/{id}:
@@ -85,6 +214,31 @@ router.put('/updateUser/:id', verifyToken, updateUser);
  *    security:
  *      - ApiKeyAuth: [] 
  *    tags: [Users]
+ *    responses:
+ *      200:
+ *        description:  Datos de usuario actualizados
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Okay'
+ *           example:
+ *                      
+ *      401:    # status code 
+ *        description:  pasar token de acceso  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: Access denied     
+ *      404: 
+ *        description: Error Not Found
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: Not found 
  */
 router.put('/updatePassword/:id', verifyToken, updatePassword);
 
@@ -97,6 +251,46 @@ router.put('/updatePassword/:id', verifyToken, updatePassword);
  *    security:
  *      - ApiKeyAuth: [] 
  *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: integer
+ *          format: int64
+ *    responses:
+ *      200: 
+ *        description: Usuario eliminado 
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Okay'
+ *           example:
+ *             status: 200
+ *             respuesta:
+ *                id: 37
+ *                nombre: Gustavo Bernal
+ *                username: Gustavo.123
+ *                password: $2a$10$Fj5GVZ0b0y8sKK5fxpR.fuPzycOXt6HN23FgbrY2sGzDdsugoHEka
+ *                email: gustavo@algo.com
+ *             message:  Usuario eliminado satisfactoriamente
+ *      404: 
+ *        description: Error Not Found
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: User not found 
+ *      401:    # status code 
+ *        description:  pasar token de acceso  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             error: Access denied  
+ * 
  */
 router.delete('/deleteUser/:id', verifyToken, deleteUser);
 

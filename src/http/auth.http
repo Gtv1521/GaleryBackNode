@@ -1,0 +1,33 @@
+#sigin
+POST http://localhost:5000/sigin
+Content-Type: application/json
+
+{ "username": "User.123", "password": "User.1234" }
+
+###
+#login
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{ 
+    "nombre": "Usuario Prueba",
+    "username": "User.123",
+    "email": "usernew123@algo.com",
+    "password": "Ilovereggae.17"
+}
+###
+POST http://localhost:5000/emailPass
+Content-Type: application/json
+
+{
+    "email": "gustavober98@gmail.com"
+}
+###
+
+POST http://localhost:5000/newPassword
+Content-Type: application/json
+
+{
+    "password":"Karen.123", 
+    "confirPass": "Karen.13"
+}

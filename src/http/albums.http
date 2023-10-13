@@ -1,0 +1,24 @@
+POST http://localhost:5000/albumNew/36
+Content-Type: application/json
+
+{ "nombre": "2 viaje" }
+
+###
+GET  http://localhost:5000/albums/36
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNlYmFzMTIzIiwidXNlcl9pZCI6NDIsImVtYWlsIjoic2ViYXN0aWFuQGFsZ28uY29tIiwibm9tYnJlIjoiU2ViYXMiLCJpYXQiOjE2OTcwNDAxODEsImV4cCI6MTY5NzA2MTc4MX0.ILtoqI7RvQWivlRHU3_p6QXeVLVigOl4Yv3rHoDpe-0
+
+###
+GET  http://localhost:5000/album/6
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNlYmFzMTIzIiwidXNlcl9pZCI6NDIsImVtYWlsIjoic2ViYXN0aWFuQGFsZ28uY29tIiwibm9tYnJlIjoiU2ViYXMiLCJpYXQiOjE2OTcwNDAxODEsImV4cCI6MTY5NzA2MTc4MX0.ILtoqI7RvQWivlRHU3_p6QXeVLVigOl4Yv3rHoDpe-0
+
+###
+DELETE http://localhost:5000/deleteAlbum/6
+
+###
+PUT  http://localhost:5000/updateAlbum/5
+Content-Type: application/json
+
+{
+    "nombre": "firs album"
+}
+
