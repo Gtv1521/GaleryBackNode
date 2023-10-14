@@ -121,7 +121,7 @@ router.get('/verImagesId/:id_user', verifyToken, verImagenesId);
  *       schema:
  *         type: integer
  *         format: int64
- *   description: Peticion para mostrar imagenes
+ *   description: Peticion para mostrar una imagen
  *   responses:
  *     '200':    # status code
  *        description: Muestra la imagen seleccionada con el id
@@ -170,12 +170,12 @@ router.get('/verImage/:id_img', verifyToken, verImage);
  *   tags: [Imagenes]   
  *   parameters:
  *     - in: path
- *       name: id_img
+ *       name: id_user
  *       required: true
  *       schema:
  *         type: integer
  *         format: int64
- *   description: Peticion para mostrar imagenes
+ *   description: Peticion para agregar una imagen
  *   responses:
  *     '200':    # status code
  *        description: Lista de imagenes de usuario
@@ -192,8 +192,6 @@ router.get('/verImage/:id_img', verifyToken, verImage);
  *             user_id: 36
  *             fecha: 2023-10-12T05:00:00.000Z
  *             album_id: 7
- * 
- *
  *     '404':    # status code 
  *        description: no hay usuarios  
  *        content:
