@@ -26,63 +26,70 @@ const router = express.Router();
  * components:
  *  schemas:
  *    Okay:
- *      type: array
- *      items: 
- *       type: object
- *       properties:
- *         status: 
- *            type: integer
- *            description: respuesta de estado ok
- *         respuesta:
- *            type: object
- *            description: consulta de usuario eliminado  
- *            properties:
- *              id: 
- *                type: integer
- *                description: id user
- *              nombre: 
- *                type: string
- *                description: nombre user
- *              username: 
- *                type: string
- *                description: username of user
- *              password: 
- *                type: string
- *                description: password of user
- *              email: 
- *                type: string
- *                description: email of user
- *         message: 
- *           type: string
- *           description: descripcion del message 
+ *      type: object
+ *      properties:
+ *        status: 
+ *           type: integer
+ *           description: respuesta de estado ok
+ *        respuesta:
+ *           type: object
+ *           description: consulta de usuario eliminado  
+ *           properties:
+ *             id: 
+ *               type: integer
+ *               description: id user
+ *             nombre: 
+ *               type: string
+ *               description: nombre user
+ *             username: 
+ *               type: string
+ *               description: username of user
+ *             password: 
+ *               type: string
+ *               description: password of user
+ *             email: 
+ *               type: string
+ *               description: email of user
+ *        message: 
+ *          type: string
+ *          description: descripcion del message 
+ * 
  *    Error:
- *      type: array
- *      items: 
- *       type: object
- *       properties:
- *         error: 
- *           type: string
- *           description: descripcion del error 
+ *      type: object
+ *      properties:
+ *        message: 
+ *          type: string
+ *          description: descripcion del error 
+ * 
+ *    
+ *    respuestaComun:
+ *      type: object
+ *      properties:
+ *        status: 
+ *          type: integer
+ *          description:  Numero de estado 
+ *        message: 
+ *          type: string
+ *          description:  Descripcion del mensaje  
+ * 
  *    Usuario:
- *      type: array
- *      items: 
- *        type: object
- *        properties:
- *           id: 
- *             type: integer
- *             description: id user
- *           nombre: 
- *             type: string
- *             description: nombre user
- *           username: 
- *             type: string
- *             description: username of user
- *           password: 
- *             type: string
- *             description: password of user
- *           email: 
- *             type: string
- *             description: email of user
+ *      type: object
+ *      properties:
+ *         id: 
+ *           type: integer
+ *           description: id user
+ *         nombre: 
+ *           type: string
+ *           description: nombre user
+ *         username: 
+ *           type: string
+ *           description: username of user
+ *         password: 
+ *           type: string
+ *           description: password of user
+ *         email: 
+ *           type: string
+ *           description: email of user
  */
 
 /**
@@ -124,7 +131,7 @@ const router = express.Router();
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: Not found     
+ *             message: Not found     
  *     '401':    # status code 
  *        description:  pasar token de acceso  
  *        content:
@@ -132,7 +139,7 @@ const router = express.Router();
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: Access denied                               
+ *             message: Access denied                               
  */
 router.get('/users', verifyToken, consultaUsers);
 
@@ -169,22 +176,19 @@ router.get('/users', verifyToken, consultaUsers);
  *                username: 
  *                  type: string
  *                  description: nombre unico de suario 
- *                email: 
- *                  type: string
- *                  description: email unico de suario
  *              example:
  *                nombre: Gus Bernal
  *                username: gtv.312
- *                email: gus@correo.com
  *    responses:
  *      200:
  *        description:  Datos de usuario actualizados
  *        content:
  *         application/json:
  *           schema: 
- *             $ref: '#/components/schemas/Okay'
+ *             $ref: '#/components/schemas/respuestaComun'
  *           example:
- *             
+ *             status: 200
+ *             message: User updated
  *                      
  *      401:    # status code 
  *        description:  Pasar token de acceso  
@@ -193,7 +197,7 @@ router.get('/users', verifyToken, consultaUsers);
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: Access denied     
+ *             message: Access denied     
  *      404: 
  *        description: Error Not Found
  *        content:
@@ -201,7 +205,7 @@ router.get('/users', verifyToken, consultaUsers);
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: Inserte todos los datos   
+ *             message: Inserte todos los datos   
 */   
 router.put('/updateUser/:id', verifyToken, updateUser);
 
@@ -214,23 +218,45 @@ router.put('/updateUser/:id', verifyToken, updateUser);
  *    security:
  *      - ApiKeyAuth: [] 
  *    tags: [Users]
+ *    requestBody:
+ *      required: true
+ *      description: Envie la contraseña antigua y la nueva para actualizar por medio del objeto.
+ *      content:
+ *        application/json:
+ *          schema:    
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                passwordAntiguo: 
+ *                  type: string
+ *                  description: nombre de suario
+ *                passwordNuevo: 
+ *                  type: string
+ *                  description: nombre unico de suario 
+ *              example:
+ *                passwordAntiguo: Gustavo.123
+ *                passwordNuevo: gtv.312
  *    responses:
  *      200:
  *        description:  Datos de usuario actualizados
  *        content:
  *         application/json:
  *           schema: 
- *             $ref: '#/components/schemas/Okay'
+ *             $ref: '#/components/schemas/respuestaComun'
  *           example:
- *                      
+ *              status: 200
+ *              message: Password updated successfully 
+ *         
  *      401:    # status code 
- *        description:  pasar token de acceso  
+ *        description:  Pasar token de acceso  
  *        content:
  *         application/json:
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: Access denied     
+ *             message: Access denied 
+ *     
  *      404: 
  *        description: Error Not Found
  *        content:
@@ -238,7 +264,7 @@ router.put('/updateUser/:id', verifyToken, updateUser);
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: Not found 
+ *             message: Not found 
  */
 router.put('/updatePassword/:id', verifyToken, updatePassword);
 
@@ -247,7 +273,7 @@ router.put('/updatePassword/:id', verifyToken, updatePassword);
  * @swagger
  * /deleteUser/{id}:
  *   delete:
- *    summary: Actualiza la contraseña  de usuario
+ *    summary: Elimina un usuario
  *    security:
  *      - ApiKeyAuth: [] 
  *    tags: [Users]
@@ -281,7 +307,7 @@ router.put('/updatePassword/:id', verifyToken, updatePassword);
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: User not found 
+ *             message: User not found 
  *      401:    # status code 
  *        description:  pasar token de acceso  
  *        content:
@@ -289,7 +315,7 @@ router.put('/updatePassword/:id', verifyToken, updatePassword);
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             error: Access denied  
+ *             message: Access denied  
  * 
  */
 router.delete('/deleteUser/:id', verifyToken, deleteUser);

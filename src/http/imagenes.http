@@ -1,0 +1,20 @@
+# Consultar una imagen 
+GET  http://localhost:5000/verImagesId/36
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIuMTIzIiwidXNlcl9pZCI6NDMsImVtYWlsIjoidXNlcm5ldzEyM0BhbGdvLmNvbSIsIm5vbWJyZSI6IlVzdWFyaW8gUHJ1ZWJhIiwiaWF0IjoxNjk3MjA2ODUzLCJleHAiOjE2OTcyMjg0NTN9.zIH_aq5n8BdKfejmvPwGzwbCJ7QzIjEC_O58chuOtS4
+
+###
+GET http://localhost:5000/verImage/37
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIuMTIzIiwidXNlcl9pZCI6NDMsImVtYWlsIjoidXNlcm5ldzEyM0BhbGdvLmNvbSIsIm5vbWJyZSI6IlVzdWFyaW8gUHJ1ZWJhIiwiaWF0IjoxNjk3MjA2ODUzLCJleHAiOjE2OTcyMjg0NTN9.zIH_aq5n8BdKfejmvPwGzwbCJ7QzIjEC_O58chuOtS4
+
+###
+PUT http://localhost:5000/updateImage/37
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIuMTIzIiwidXNlcl9pZCI6NDMsImVtYWlsIjoidXNlcm5ldzEyM0BhbGdvLmNvbSIsIm5vbWJyZSI6IlVzdWFyaW8gUHJ1ZWJhIiwiaWF0IjoxNjk3MjA2ODUzLCJleHAiOjE2OTcyMjg0NTN9.zIH_aq5n8BdKfejmvPwGzwbCJ7QzIjEC_O58chuOtS4
+Content-Type: application/json
+
+{
+    "name_img": "new",
+    "description_img": "now img",
+    "album_id": "7"
+}
+
+###

@@ -92,8 +92,13 @@ router.get('/formLogin', async (req, res) => {
  *          username: Gustavo123
  *          password: gus.123
  *          email: correo@algo.com
- * 
- *            
+ *     
+ *    Result:
+ *      type: object
+ *      properties:
+ *        message: 
+ *          type: string
+ *          description: resultado         
  */
 
 // log in ruta
@@ -252,7 +257,46 @@ router.post('/login', logIn);
  */
 router.post('/sigin', sigIn);
 
+
 // new password
+/**
+ * @swagger
+ * /emailPass:
+ *  post:
+ *   summary: Envia un mensaje al email para restableser contraseña.
+ *   tags: [Autenticacion]  
+ *   requestBody:
+ *     required: true
+ *     content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/Error' 
+ *          required: true
+ *             - email 
+ *          example: 
+ *             email: gustavo@algo.com
+ * 
+ *   responses: 
+ *     200:    # status code
+ *        description: respuesta de envio de correo
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Result'
+ *            example:
+ *              email: gustavo@algo.com
+ *              message: Link send email
+ * 
+ *     404:    # status code
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Error'
+ *            example:
+ *              message: Email not exit in the database
+ * 
+ */
 router.post('/emailPass', sendEmail);
 
 router.get('/newPassword/:token/:id', async (req, res) => {
@@ -266,6 +310,61 @@ router.get('/newPassword/:token/:id', async (req, res) => {
    `)
 })
 // valida el nuevo password y lo agrega a la base
-router.post('/newPassword/:id', verifyToken, passNew);
+/**
+ * @swagger
+ * /newPassword/{id}:
+ *  post:
+ *   summary: Envia un mensaje al email para restableser contraseña.
+ *   security:
+ *     - ApiKeyAuth: []   
+ *   tags: [Autenticacion] 
+ *   parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       schema:
+ *         type: integer
+ *         format: int64 
+ *   requestBody:
+ *     required: true
+ *     content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/Error' 
+ *          example: 
+ *            password: Gustavo.123
+ *            confirPass: Gustavo.123
+ * 
+ *   responses: 
+ *     200:    # status code
+ *        description: Respuesta de envio de correo
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Result'
+ *            example:
+ *              message: password updated successfully 
+ * 
+ *     404:    # status code
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Error'
+ *            example:
+ *              message: Current password is this
+ * 
+ *     401:    # status code
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Error'
+ *            example:
+ *              message: Access denied
+ * 
+ */
+
+router.post('/newPassword/:id', verifyToken , passNew);
 
 export default router;

@@ -102,7 +102,7 @@ const sendEmail = async (req, res) => {
                 res.status(404).json({ message: 'Email not exit in the database' });
             } else {
                 const user = { username: result[0].userName, id: result[0].id }
-                const token = genereAcessToken(user);
+                const token = generePassToken(user);
                 let urlPassNew = `${process.env.API}/newPassword/${token}`;
                 const id = result[0].id;
                 await transporter.sendMail({
@@ -131,7 +131,8 @@ const passNew = async (req, res) => {
             const user = await verifyId(id);
             const verificar = await comparar(password, user[0].password)
             if (!verificar) {
-                const result = await pool.query('UPDATE Users SET password = ? WHERE id = ?', [password, id]);
+                const encriptado = await encrypt(password);
+                const result = await pool.query('UPDATE User SET password = ? WHERE id = ?', [encriptado, id]);
                 if (result.serverStatus === 2) {
                     res.status(200).json({ message: 'password updated successfully' })
                 } else {

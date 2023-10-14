@@ -29,5 +29,5 @@ Content-Type: application/json
 
 {
     "password":"Karen.123", 
-    "confirPass": "Karen.13"
+    "confirPass": "Karen.123"
 }
