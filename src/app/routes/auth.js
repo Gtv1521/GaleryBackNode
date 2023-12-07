@@ -3,7 +3,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 // Estancias de la app
-import { sigIn, logIn, sendEmail, passNew } from '../controller/auth.controller.js';
+import { sigIn, logIn, sendEmail, passNew, verifyUsername, username, email } from '../controller/auth.controller.js';
 import { verifyToken } from '../helpers/acessToken.js';
 
 // iniciando estancias
@@ -56,6 +56,8 @@ router.get('/formLogin', async (req, res) => {
     `);
 });
 
+router.get('/username/:user', username);
+router.get('/email/:email', email);
 /**
  * @swagger
  * tags:
@@ -297,7 +299,10 @@ router.post('/sigin', sigIn);
  *              message: Email not exit in the database
  * 
  */
-router.post('/emailPass', sendEmail);
+
+
+
+// router.post('/emailPass', sendEmail);
 
 router.get('/newPassword/:token/:id', async (req, res) => {
     const { token, id } = req.params;

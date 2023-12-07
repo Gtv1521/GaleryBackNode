@@ -6,7 +6,7 @@ import { verifyId, verifyUsername } from './auth.controller.js';
 // consultar todos los Usuarios
 const consultaUsers = async (req, res) => {
     try {
-        const consultaUser = await pool.query(`SELECT * FROM User`);
+        const consultaUser = await pool.query(`SELECT * FROM usuarios`);
         if (consultaUser.length > 0) {
             res.status(200).json(consultaUser);
         } else {
@@ -19,9 +19,31 @@ const consultaUsers = async (req, res) => {
 }
 // actualiza usuario con los datos que se le pasan
 const updateUsuario = async (nombre, username, id) => {
-    return await pool.query(`UPDATE User 
-        SET nombre = ?, userName = ? WHERE id = ?`,
+    return await pool.query(`UPDATE usuarios 
+        SET nombre_user = ?, userName = ? WHERE id_user = ?`,
         [nombre, username, id]);
+}
+
+//  update email of user with id user
+const updateMail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { email } = req.body;
+
+        if (!id || !email) {
+            res.json({ message: 'send all data' });
+        } else {
+            const result = await pool.query('UPDATE usuarios SET email = ? WHERE id_user = ?', [email, id]);
+            if (result.serverStatus === 2 && result.changedRows === 1) {
+                res.json({ status: 200, message: 'Email updated successfully' });
+            } else {
+                res.json({ message: 'Update failed' });
+            }
+        }
+
+    } catch (error) {
+        res.status(404).json(error);
+    }
 }
 
 //actualizar datos personales de usuario 
@@ -34,7 +56,6 @@ const updateUser = async (req, res) => {
         // verificamos que exista
         const checkPass = await verifyId(id);
         const user = await verifyUsername(username);
-
         // los actualizamos despendiendo del caso 
         if (checkPass.length > 0) {
             if (!nombre || !username) {
@@ -64,15 +85,15 @@ const updateUser = async (req, res) => {
     }
 }
 
-// eliminar un usuario
+// delete user
 const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const respuesta = await pool.query('SELECT * FROM User WHERE id = ?', id);
+        const respuesta = await pool.query('SELECT * FROM usuarios WHERE id_user = ?', id);
         if (respuesta.length == 0) {
             res.status(404).json({ error: 'User not found' });
         } else {
-            const borrar = await pool.query('DELETE FROM User WHERE id = ?', id);
+            const borrar = await pool.query('DELETE FROM usuarios WHERE id_user = ?', id);
             res.json({ status: 200, message: 'User delete successfully' });
         }
     } catch (error) {
@@ -80,7 +101,7 @@ const deleteUser = async (req, res) => {
     }
 }
 
-// 
+// update password
 const updatePassword = async (req, res) => {
     try {
         const { id } = req.params;
@@ -90,11 +111,11 @@ const updatePassword = async (req, res) => {
         } else if (!passwordNuevo || !passwordAntiguo) {
             res.status(404).json({ message: 'Enter all fields' });
         } else {
-            const result = await pool.query('SELECT * FROM User WHERE id = ?', [id])
+            const result = await pool.query('SELECT * FROM usuarios WHERE id_user = ?', [id])
             const checkPass = await comparar(passwordAntiguo, result[0].password);
             if (checkPass) {
                 const passEncript = await encrypt(passwordNuevo);
-                const updateUser = await pool.query(`UPDATE User SET password = ? WHERE id = ?`, [passEncript, id]);
+                const updateUser = await pool.query(`UPDATE usuarios SET password = ? WHERE id_user = ?`, [passEncript, id]);
                 if (updateUser.serverStatus === 2) {
                     const respuesta = await verifyId(id);
                     res.status(200).json({ status: 200, message: 'Password updated successfully' });
@@ -110,4 +131,4 @@ const updatePassword = async (req, res) => {
     }
 }
 
-export { consultaUsers, deleteUser, updateUser, updatePassword }
+export { consultaUsers, deleteUser, updateMail, updateUser, updatePassword }

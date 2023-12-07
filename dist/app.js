@@ -29,7 +29,9 @@ app.set('port', process.env.PORT || 3000);
 // Middlewares
 app.use((0, _morgan.default)('dev'));
 app.use(_express.default.json());
-// app.use(express.urlencoded({ extended: false }));
+app.use(_express.default.urlencoded({
+  extended: false
+}));
 app.use((0, _cors.default)());
 
 // configuracion de swaggwer 

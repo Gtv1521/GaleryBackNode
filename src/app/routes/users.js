@@ -2,7 +2,7 @@
 import express from 'express';
 
 // componentes de aplicacion 
-import { consultaUsers, deleteUser, updateUser, updatePassword } from '../controller/user.controller.js';
+import { consultaUsers, deleteUser, updateMail,   updateUser, updatePassword } from '../controller/user.controller.js';
 
 // Imported components
 import { verifyToken } from '../helpers/acessToken.js';
@@ -125,7 +125,7 @@ const router = express.Router();
  * 
  *
  *     '404':    # status code 
- *        description: no hay usuarios  
+ *        description: No hay usuarios  
  *        content:
  *         application/json:
  *           schema: 
@@ -133,7 +133,7 @@ const router = express.Router();
  *           example:
  *             message: Not found     
  *     '401':    # status code 
- *        description:  pasar token de acceso  
+ *        description:  Pasar token de acceso  
  *        content:
  *         application/json:
  *           schema: 
@@ -143,7 +143,7 @@ const router = express.Router();
  */
 router.get('/users', verifyToken, consultaUsers);
 
-// actualiza datos de Usuario
+// update data user 
 /**
  * @swagger
  * /updateUser/{id}:
@@ -162,23 +162,21 @@ router.get('/users', verifyToken, consultaUsers);
  * 
  *    requestBody:
  *      required: true
- *      description: pase los datos de usuario a actualizar por medio del objeto.
+ *      description: Pase los datos de usuario a actualizar por medio del objeto.
  *      content:
  *        application/json:
  *          schema:    
- *            type: array
- *            items:
- *              type: object
- *              properties:
- *                nombre: 
- *                  type: string
- *                  description: nombre de suario
- *                username: 
- *                  type: string
- *                  description: nombre unico de suario 
- *              example:
- *                nombre: Gus Bernal
- *                username: gtv.312
+ *            type: object
+ *            properties:
+ *              nombre: 
+ *                type: string
+ *                description: Nombre de suario
+ *              username: 
+ *                type: string
+ *                description: Nombre unico de suario 
+ *            example:
+ *              nombre: Gustavo Bernal
+ *              username: gtv.312
  *    responses:
  *      200:
  *        description:  Datos de usuario actualizados
@@ -205,11 +203,11 @@ router.get('/users', verifyToken, consultaUsers);
  *           schema: 
  *             $ref: '#/components/schemas/Error'
  *           example:
- *             message: Inserte todos los datos   
+ *             message: Send all data    
 */   
 router.put('/updateUser/:id', verifyToken, updateUser);
 
-// actualiza contraseña   
+// update password   
 /**
  * @swagger
  * /updatePassword/{id}:
@@ -218,25 +216,30 @@ router.put('/updateUser/:id', verifyToken, updateUser);
  *    security:
  *      - ApiKeyAuth: [] 
  *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: integer
+ *          format: int64
  *    requestBody:
  *      required: true
  *      description: Envie la contraseña antigua y la nueva para actualizar por medio del objeto.
  *      content:
  *        application/json:
  *          schema:    
- *            type: array
- *            items:
- *              type: object
- *              properties:
- *                passwordAntiguo: 
- *                  type: string
- *                  description: nombre de suario
- *                passwordNuevo: 
- *                  type: string
- *                  description: nombre unico de suario 
- *              example:
- *                passwordAntiguo: Gustavo.123
- *                passwordNuevo: gtv.312
+ *            type: object
+ *            properties:
+ *              passwordAntiguo: 
+ *                type: string
+ *                description: nombre de suario
+ *              passwordNuevo: 
+ *                type: string
+ *                description: nombre unico de suario 
+ *            example:
+ *              passwordAntiguo: Gustavo.123
+ *              passwordNuevo: gtv.312
  *    responses:
  *      200:
  *        description:  Datos de usuario actualizados
@@ -268,7 +271,67 @@ router.put('/updateUser/:id', verifyToken, updateUser);
  */
 router.put('/updatePassword/:id', verifyToken, updatePassword);
 
-// elimina usuario
+// update email
+/**
+ * @swagger
+ * /updateEmail/{id}:
+ *   put:
+ *    summary: Actualiza la contraseña  de usuario
+ *    security:
+ *      - ApiKeyAuth: [] 
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: integer
+ *          format: int64
+ *    requestBody:
+ *      required: true
+ *      description: Envie la contraseña antigua y la nueva para actualizar por medio del objeto.
+ *      content:
+ *        application/json:
+ *          schema:    
+ *            type: object
+ *            properties:
+ *              email: 
+ *                type: string
+ *                description: Email nuevo
+ *            example:
+ *              email: gustavober98@gmail.com
+ *    responses:
+ *      200:
+ *        description:  Datos de usuario actualizados
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/respuestaComun'
+ *           example:
+ *              status: 200
+ *              message: Email updated successfully 
+ *         
+ *      401:    # status code 
+ *        description:  Pasar token de acceso  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             message: Access denied 
+ *     
+ *      404: 
+ *        description: Error Not Found
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             message: Not found 
+ */
+router.put('/updateEmail/:id', verifyToken, updateMail);
+
+// delete user
 /**
  * @swagger
  * /deleteUser/{id}:
@@ -299,7 +362,7 @@ router.put('/updatePassword/:id', verifyToken, updatePassword);
  *                username: Gustavo.123
  *                password: $2a$10$Fj5GVZ0b0y8sKK5fxpR.fuPzycOXt6HN23FgbrY2sGzDdsugoHEka
  *                email: gustavo@algo.com
- *             message:  Usuario eliminado satisfactoriamente
+ *             message:  User delete successfully
  *      404: 
  *        description: Error Not Found
  *        content:

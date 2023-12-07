@@ -1,19 +1,24 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _express = _interopRequireDefault(require("express"));
+var _acessToken = require("../helpers/acessToken.js");
+var _albumController = require("../controller/album.controller.js");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 //librerias 
-import express from 'express'
 
 // componentes de la aplicacion
-import { verifyToken } from '../helpers/acessToken.js';
-import { albumsIdUser, albumId, updateAlbum, albumNew, deleteAlbum } from '../controller/album.controller.js'
 
 /**
  * @swagger
  * tags:
  *  name: Albums
  *  description: Rutas de CRUD de imagenes  
- */
-
-// iniciando estancias 
-const router = express.Router();
+ */ // iniciando estancias 
+const router = _express.default.Router();
 // todos los albums que tengan id de usuario
 /**
  * @swagger
@@ -61,7 +66,7 @@ const router = express.Router();
  *           example:
  *             message: Access denied                               
  */
-router.get('/albums/:id', verifyToken, albumsIdUser );
+router.get('/albums/:id', _acessToken.verifyToken, _albumController.albumsIdUser);
 
 // escoge un album con id de album
 /**
@@ -109,7 +114,7 @@ router.get('/albums/:id', verifyToken, albumsIdUser );
  *           example:
  *             message: Access denied                               
  */
-router.get('/album/:id', verifyToken, albumId );
+router.get('/album/:id', _acessToken.verifyToken, _albumController.albumId);
 
 // crea un nuevo album
 /**
@@ -167,7 +172,7 @@ router.get('/album/:id', verifyToken, albumId );
  *           example:
  *             message: Access denied                               
  */
-router.post('/albumNew/:id', verifyToken, albumNew);
+router.post('/albumNew/:id', _acessToken.verifyToken, _albumController.albumNew);
 
 // actualiza un album con id de album
 /**
@@ -225,7 +230,7 @@ router.post('/albumNew/:id', verifyToken, albumNew);
  *           example:
  *             message: Access denied                               
  */
-router.put('/updateAlbum/:id', verifyToken, updateAlbum);
+router.put('/updateAlbum/:id', _acessToken.verifyToken, _albumController.updateAlbum);
 
 // elimina un album con id de album
 /**
@@ -272,6 +277,5 @@ router.put('/updateAlbum/:id', verifyToken, updateAlbum);
  *           example:
  *             message: Access denied                               
  */
-router.delete('/deleteAlbum/:id', verifyToken, deleteAlbum );
-
-export default router;
+router.delete('/deleteAlbum/:id', _acessToken.verifyToken, _albumController.deleteAlbum);
+var _default = exports.default = router;

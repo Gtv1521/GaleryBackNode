@@ -19,14 +19,13 @@ Content-Type: application/json
 
 
 ###
-PUT  http://localhost:5000/updatePassword/43
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5NzEyNTc5OCwiZXhwIjoxNjk3MTQ3Mzk4fQ.TmnuN7Onkz2Eg_irlrB1mL1NglA3wIs-ZzJw-kB0sYo
-
+PUT  http://localhost:5000/updatePassword/45
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5NzIzMDQyNCwiZXhwIjoxNjk3MjUyMDI0fQ.bPmkRsJkdsvlB65LJQQmSfdAF68jUal80UhaauClxtM
 Content-Type: application/json
 
 {
-    "password_antiguio": "Ilovereggae.17",
-    "password_nuevo": "User.1234"
+    "passwordAntiguo":"Gustavo.123", 
+    "passwordNuevo":"Prueba.123"
 }
 ###
 PUT  http://localhost:5000/uploadImage/37

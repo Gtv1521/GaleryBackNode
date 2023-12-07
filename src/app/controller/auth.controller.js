@@ -12,54 +12,78 @@ dotenv.config();
 
 // verifica Username en DB
 const verifyUsername = async (username) => {
-    return await pool.query(`select * from User where userName = ?`, [username]);
+    return await pool.query(`SELECT * FROM usuarios WHERE userName = ?`, [username]);
 };
 // verifica email en DB
 const verifyEmail = async (email) => {
-    return await pool.query(`select * from User where email = ?`, [email]);
+    return await pool.query(`SELECT * FROM usuarios WHERE email = ?`, [email]);
 };
 // verifica que el usuario exista
 const verifyId = async (id) => {
-    return await pool.query(`select * from User where id = ?`, [id]);
+    return await pool.query(`SELECT * FROM usuarios WHERE id_user = ?`, [id]);
 };
+
+const username = async (req, res) => {
+    try {
+        const { user } = req.params
+        const result = await verifyUsername(user)
+        res.json(result[0])
+    } catch (error) {
+        res.json(error)
+    }
+}
+
+const email = async (req, res) => {
+    try {
+        const { email } = req.params
+        const result = await verifyEmail(email)
+        res.json(result[0])
+    } catch (error) {
+        res.json(error)
+    }
+}
 
 // registra un usuario
 const logIn = async (req, res) => {
     try {
         const { nombre, username, email, password } = req.body;
-        const passEncript = await encrypt(password);
+        if (!nombre || !username || !password || !email) {
+            res.json({ status: 404, message: 'send all data' })
+        } else {
+            const passEncript = await encrypt(password);
 
-        const exitUsername = await verifyUsername(username);
-        const exitEmail = await verifyEmail(email);
-        if (exitUsername.length === 0) {
-            if (exitEmail.length === 0) {
-                const insertUser = await pool.query(`insert into 
-                User (nombre, userName, email, password) 
-                values (?, ?, ?, ?)`,
-                    [nombre, username, email, passEncript]);
+            const exitUsername = await verifyUsername(username);
+            const exitEmail = await verifyEmail(email);
+            if (exitUsername.length === 0) {
+                if (exitEmail.length === 0) {
+                    const insertUser = await pool.query(`INSERT INTO 
+                usuarios (nombre_user, userName, email, password) 
+                VALUES (?, ?, ?, ?)`,
+                        [nombre, username, email, passEncript]);
 
-                if (insertUser.serverStatus === 2) {
-                    const user = {
-                        username: username, user_id: insertUser.insertId,
-                        email: email, nombre: nombre
+                    if (insertUser.serverStatus === 2) {
+                        const user = {
+                            username: username, user_id: insertUser.insertId,
+                            email: email, nombre: nombre
+                        }
+                        const accessToken = genereAcessToken(user);
+                        res.header('Authorization', accessToken).json({
+                            id: insertUser.insertId, nombre: nombre,
+                            password: password, username: username,
+                            email: email, message: 'New user added',
+                            message: 'User authenticated',
+                            token: accessToken
+                        });
+
+                    } else {
+                        res.send('user insert failed');
                     }
-                    const accessToken = genereAcessToken(user);
-                    res.header('Authorization', accessToken).json({
-                        id: insertUser.insertId, nombre: nombre,
-                        password: password, username: username,
-                        email: email, message: 'Nuevo usuario agregado',
-                        message: 'User authenticated',
-                        token: accessToken
-                    });
-
                 } else {
-                    res.send('Error al insertar usuario');
+                    res.status(404).json({ message: 'Email is user: ' + exitEmail[0].userName });
                 }
             } else {
-                res.status(404).json({ message: 'email es del usuario: ' + exitEmail[0].userName });
+                res.status(404).json({ message: 'Username exist for other user' })
             }
-        } else {
-            res.status(404).json({ message: 'Username exist for other user' })
         }
     } catch (error) {
         res.status(404).json(error);
@@ -72,17 +96,18 @@ const sigIn = async (req, res) => {
         const { username, password } = req.body;
         const verifyPass = await verifyUsername(username);
         const checkPass = await comparar(password, verifyPass[0].password);
-        const { nombre, id, email } = verifyPass[0];
+        const { nombre_user, id_user, email } = verifyPass[0];
         if (checkPass) {
-            const user = { username: username, user_id: id, email: email, nombre: nombre }
+            const user = { username: username, user_id: id_user, email: email, nombre: nombre_user }
             const accessToken = genereAcessToken(user);
             res.header('Authorization', accessToken).json({
-                wellcome: `wellcome ${nombre}`,
+                id: id_user, 
+                wellcome: `Wellcome ${nombre_user}`,
                 message: 'User authenticated',
                 token: accessToken
             });
         } else {
-            res.status(404).json({ message: 'Datos no coinciden' });
+            res.status(404).json({ message: 'Mismatched data' });
         }
 
     } catch (error) {
@@ -132,7 +157,7 @@ const passNew = async (req, res) => {
             const verificar = await comparar(password, user[0].password)
             if (!verificar) {
                 const encriptado = await encrypt(password);
-                const result = await pool.query('UPDATE User SET password = ? WHERE id = ?', [encriptado, id]);
+                const result = await pool.query('UPDATE usuarios SET password = ? WHERE id_user = ?', [encriptado, id]);
                 if (result.serverStatus === 2) {
                     res.status(200).json({ message: 'password updated successfully' })
                 } else {
@@ -149,5 +174,5 @@ const passNew = async (req, res) => {
     }
 };
 
-export { logIn, sigIn, sendEmail, passNew, verifyEmail, verifyUsername, verifyId }
+export { logIn, sigIn, sendEmail, passNew, verifyEmail, email, username, verifyUsername, verifyId }
 

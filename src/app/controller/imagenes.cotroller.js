@@ -19,11 +19,11 @@ const verAlbum = async (album_id, user_id) => {
 const addImage = async (req, res) => {
     try {
         const { id_user } = req.params;
-        const { name_img, description_img, album_id } = req.body;
+        const { name_img, album_id } = req.body;
         let url_img = '';
         let id_url = '';
         // insertamos la imagen en la DB
-        if (!name_img || !description_img || !album_id) {
+        if (!name_img || !album_id || req.files == null) {
             res.status(404).json({ message: "Send all data" });
         } else {
             if (req.files?.image) { //verifica que exista una imagen
@@ -44,15 +44,15 @@ const addImage = async (req, res) => {
             } else {
                 const imagenConsulta = await pool.query(`
                     INSERT INTO imagenes
-                    (name_img, description_img, url_img, user_id, id_url, album_id, fecha)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [name_img, description_img, url_img, id_user, id_url, album_id, fecha]);
+                    (name_img, url_img, id_url, user_id_img, fecha, album_id)
+                    VALUES (?, ?, ?, ?, ?, ?)`,
+                    [name_img, url_img, id_url, id_user, fecha, album_id]);
 
                 //validamos que la respuesta sea correcta 
                 if (imagenConsulta.serverStatus == 2) {
                     res.status(200).json({
                         id: imagenConsulta.insertId, nombre: name_img,
-                        descripcion: description_img, url: url_img, id_url: id_url, album: album_id, fecha: fecha, message: 'add image successfully'
+                        url: url_img, id_url: id_url, album: album_id, fecha: fecha, message: 'Image added successfully'
                     });
                 } else {
                     res.json({ message: 'Add image failed' });
@@ -79,7 +79,7 @@ const verImage = async (req, res) => {
 const verImagenesId = async (req, res) => {
     try {
         const { id_user } = req.params;
-        const consutaImagenes = await pool.query(`SELECT * FROM imagenes WHERE user_id = ?`, [id_user]);
+        const consutaImagenes = await pool.query(`SELECT * FROM imagenes WHERE user_id_img = ?`, [id_user]);
         if (consutaImagenes.length !== 0) {
             res.json(consutaImagenes);
         } else {
@@ -89,16 +89,37 @@ const verImagenesId = async (req, res) => {
         res.json(error);
     }
 }
+// ver imagenes de un Album
+const verAllImagesAlbum = async (req, res) => {
+    try {
+        const { album_id } = req.params;
+        if (!album_id) {
+            res.json({ message: 'Send all data' });
+        } else {
+            console.log()
+            const consutaImagenes = await pool.query(`SELECT * FROM imagenes  WHERE album_id = ?`, [album_id]);
+            if (consutaImagenes.length !== 0) {
+                res.json(consutaImagenes);
+            } else {
+                res.json({ message: 'There are no images to show' });
+            }
+        }
+    } catch (error) {
+        res.json(error);
+    }
+}
 
 // elimiar imagen DELETE
 const deleteImagen = async (req, res) => {
     try {
-        const { id_user } = req.params;
-        const id_url = await consultaImg(id); 
-        const respuesta = await pool.query('DELETE FROM imagenes WHERE id_img = ?', [id_user]);
+        const { id_img } = req.params;
+        const id_url = await consultaImg(id_img);
+        const respuesta = await pool.query('DELETE FROM imagenes WHERE id_img = ?', [id_img]);
         if (respuesta.serverStatus === 2 && respuesta.affectedRows > 0) {
-            const foto = await fotoDelete(id_url[0].id_url);
-            res.json({ message: 'Image delete successfully' });
+            if (!id_url[0].id_url) {
+                const foto = await fotoDelete(id_url[0].id_url);
+            }
+            res.json({ status: 200, message: 'Image delete successfully' });
         } else {
             res.json({ message: 'Image no exist' });
         }
@@ -110,23 +131,61 @@ const deleteImagen = async (req, res) => {
 // actualizar datos de imagen UPDATE
 const updateImage = async (req, res) => {
     try {
+        console.log(req.params, req.body, req.files)
         const { id_img } = req.params;
-        const { name_img, description_img, album_id } = req.body;
-        // capturamos la fecha 
-        const tiempo = Date.now();
-        const fecha = new Date(tiempo);
-        // const fecha = hoy.toDateString();
-        const updateUser = await pool.query(`UPDATE imagenes SET
-             name_img = ?, description_img = ?, fecha = ?, album_id = ? WHERE id_img = ?`,
-            [name_img, description_img, fecha , album_id, id_img]);
-        if (updateUser.serverStatus === 2 && updateUser.changedRows === 1) {
-            res.json({ updateUser, message: 'User updated' });   
+        const { name_img, album_id } = req.body;
+        if (!id_img || !name_img || !album_id) {
+            res.json({ message: 'Send all data' })
         } else {
-            res.json({ message: 'There are no changes to the object' });
+            if (req.files?.image) { //verifica que exista una imagen
+                const dataImage = await pool.query('SELECT id_url FROM imagenes WHERE id_img = ?', [id_img])
+                console.log(dataImage)
+                if (!dataImage) {
+                    await fotoDelete(dataImage[0].id_url);
+                }
+
+                const result = await fotoUpload(req.files.image.tempFilePath); //sube a cloudinary
+                const url_img = result.secure_url; //saca la url de la imagen en la red 
+                const id_url = result.public_id; //nos da el id de la imagen en cloudinary
+                const actualization = await pool.query(`UPDATE imagenes SET
+                 url_img = ?, id_url= ? WHERE id_img = ?`, [url_img, id_url, id_img])
+                await fs.remove(req.files.image.tempFilePath);
+
+            }
+            // capturamos la fecha 
+            const tiempo = Date.now();
+            const fecha = new Date(tiempo);
+            // const fecha = hoy.toDateString();
+            const updateImg = await pool.query(`UPDATE imagenes SET
+             name_img = ?, fecha = ?, album_id = ? WHERE id_img = ?`,
+                [name_img, fecha, album_id, id_img]);
+            if (updateImg.serverStatus === 2 && updateImg.changedRows === 1) {
+                res.json({ status: 200, message: 'Image updated' });
+            } else {
+                res.json({ status: 404, message: 'There are no changes to the object' });
+            }
+        }
+
+    } catch (error) {
+        res.status(404).json(error);
+    }
+}
+const verImagesAlbum = async (req, res) => {
+    try {
+        const { album_id } = req.params;
+        if (!album_id) {
+            res.json({ message: 'Send all data' })
+        } else {
+            const result = await pool.query('SELECT album_id, url_img FROM imagenes WHERE album_id = ? LIMIT 4', [album_id])
+            if (result.length > 0) {
+                res.json(result)
+            } else {
+                res.json({ status: 200, message: 'no hay imagenes' })
+            }
         }
     } catch (error) {
-        res.json(error);
+        res.status(404).json(error)
     }
 }
 
-export { addImage, deleteImagen, verImage, verImagenesId, updateImage }
+export { addImage, deleteImagen, verImage, verImagenesId, updateImage, verImagesAlbum, verAllImagesAlbum }

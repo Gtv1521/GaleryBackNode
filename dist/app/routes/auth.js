@@ -6,7 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _express = _interopRequireDefault(require("express"));
 var _dotenv = _interopRequireDefault(require("dotenv"));
-var _authControler = require("../controller/auth.controler.js");
+var _authController = require("../controller/auth.controller.js");
+var _acessToken = require("../helpers/acessToken.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 // Librerias
 
@@ -61,8 +62,15 @@ router.get('/formLogin', async (req, res) => {
         </body>
     `);
 });
+router.get('/username/:user', _authController.username);
+router.get('/email/:email', _authController.email);
+/**
+ * @swagger
+ * tags:
+ *  name: Autenticacion
+ *  description: Rutas de usuarios LOGIN Y SIGIN 
+ */
 
-// log in ruta
 /**
  * @swagger
  * components:
@@ -88,26 +96,25 @@ router.get('/formLogin', async (req, res) => {
  *          - password
  *          - email  
  *      example:
- *          nombre: Gstavo Bernal
+ *          nombre: Gustavo Bernal
  *          username: Gustavo123
  *          password: gus.123
  *          email: correo@algo.com
- * 
- *            
+ *     
+ *    Result:
+ *      type: object
+ *      properties:
+ *        message: 
+ *          type: string
+ *          description: resultado         
  */
 
-/**
- * @swagger
- * tags:
- *  name: Autenticacion
- *  description: Rutas de usuarios LOGIN Y SIGIN 
- */
-
+// log in ruta
 /**
  * @swagger
  * /login:
  *  post:
- *   summary: crea un usuario nuevo.
+ *   summary: Crea un usuario nuevo.
  *   tags: [Autenticacion]    
  *   description: Crea un usuario y porporciona access token.
  *   requestBody:
@@ -123,8 +130,39 @@ router.get('/formLogin', async (req, res) => {
  *           application/json:
  *             schema: 
  *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Userlogin'
+ *               items: 
+ *                type: object
+ *                properties:
+ *                  id: 
+ *                    type: integer
+ *                    description: Id usuario
+ *                  nombre: 
+ *                    type: string
+ *                    description: Nombre del usuario
+ *                  username: 
+ *                    type: string
+ *                    description: Nombre unico al usuario 
+ *                  password: 
+ *                    type: string
+ *                    description: Contraseña de usuario creado 
+ *                  email: 
+ *                    type: string
+ *                    description: Email unico del usuario
+ *                  message: 
+ *                    type: string
+ *                    description: Mensaje de autenticacion
+ *                  token: 
+ *                    type: string
+ *                    description: Token de acceso de usuario
+ *                example:  
+ *                  id: 20
+ *                  nombre: Gustavo Bernal
+ *                  username: Gus.123
+ *                  password: gustavo.123
+ *                  email: correo@correo.com 
+ *                  message: User authenticated
+ *                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5Njg2MjA3MSwiZXhwIjoxNjk2ODgzNjcxfQ.XYTZ8itH0i1vstp7oJaaVIzJH3szR3LInrHK42Red_s
+ *                 
  *        links: 
  *          getUsers:
  *            operationId: getUsers 
@@ -140,14 +178,14 @@ router.get('/formLogin', async (req, res) => {
  *                properties:
  *                  error: 
  *                    type: string
- *                    properties: mesaje de error 
+ *                    properties: Mensaje de error 
  *                example:  
- *                  message: datos no coinciden 
+ *                  message: Datos pertenecen a otro usuario 
  *   
  *                       
  *                          
  */
-router.post('/login', _authControler.logIn);
+router.post('/login', _authController.logIn);
 
 // sig in ruta
 /**
@@ -159,29 +197,26 @@ router.post('/login', _authControler.logIn);
  *      properties:
  *        id: 
  *          type: integer
- *          description: numero de identificacion de usuario
+ *          description: Numero de identificacion de usuario
  *        username: 
  *          type: string
- *          description: nombre de usuario de registrado
+ *          description: Nombre de usuario de registrado
  *        password:
  *          type: password
- *          description: contraseña de usuario de registrado  
+ *          description: Contraseña de usuario de registrado  
  *      required: 
  *          - username
  *          - password
  *      example:
- *          id: 20
  *          username: Gustavo123
- *          password: gus.123
- * 
- *            
+ *          password: Ilovereggae.17           
  */
 
 /**
  * @swagger
  * /sigin:
  *  post:
- *   summary: acede a una sesion de usuario.
+ *   summary: Accede a una sesion de usuario.
  *   tags: [Autenticacion]  
  *   requestBody:
  *     required: true
@@ -191,15 +226,155 @@ router.post('/login', _authControler.logIn);
  *            $ref: '#/components/schemas/User'     
  *   responses:
  *     '200':    # status code
- *        description: Usuario creado satisfactoriamente 
+ *        description: Usuario autenticado
  *        content:
  *           application/json:
  *             schema: 
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/User'
+ *                 type: object
+ *                 properties:
+ *                   wellcome: 
+ *                       type: string
+ *                       description: Mensaje de bienvenida con el nombre de usuario
+ *                   message: 
+ *                      type: string
+ *                      description: Mensaje de autenticacion
+ *                   token: 
+ *                       type: string
+ *                       description: Token de acceso
+ *                 example:
+ *                     wellcome: Bienvenido ${user}
+ *                     messagge: User authenticated
+ *                     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikd1c3Rhdm8xMjMiLCJ1c2VyX2lkIjozNiwiZW1haWwiOiJndXN0YXZvYmVyOThAZ21haWwuY29tIiwibm9tYnJlIjoiR3VzdGF2byIsImlhdCI6MTY5Njg2MjA3MSwiZXhwIjoxNjk2ODgzNjcxfQ.XYTZ8itH0i1vstp7oJaaVIzJH3szR3LInrHK42Red_s                     
+ * 
  *     '404':    # status code 
- *        description: error del servidor                           
+ *        description: Error Not Found
+ *        content:
+ *           application/json:
+ *             schema: 
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   message: 
+ *                      type: string
+ *                      description: Mensaje de autenticacion
+ *                 example:
+ *                     messagge: Datos no coinciden                         
  */
-router.post('/sigin', _authControler.sigIn);
+router.post('/sigin', _authController.sigIn);
+
+// new password
+/**
+ * @swagger
+ * /emailPass:
+ *  post:
+ *   summary: Envia un mensaje al email para restableser contraseña.
+ *   tags: [Autenticacion]  
+ *   requestBody:
+ *     required: true
+ *     content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/Error' 
+ *          required: true
+ *             - email 
+ *          example: 
+ *             email: gustavo@algo.com
+ * 
+ *   responses: 
+ *     200:    # status code
+ *        description: respuesta de envio de correo
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Result'
+ *            example:
+ *              email: gustavo@algo.com
+ *              message: Link send email
+ * 
+ *     404:    # status code
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Error'
+ *            example:
+ *              message: Email not exit in the database
+ * 
+ */
+
+// router.post('/emailPass', sendEmail);
+
+router.get('/newPassword/:token/:id', async (req, res) => {
+  const {
+    token,
+    id
+  } = req.params;
+  res.send(`
+        <form action="/newPassword/${id}?access_token=${token}" method="POST" id="formUser">
+             <input type="password" name="password" placeholder="password">
+             <input type="password" name="confirPass" placeholder="confirm">
+             <input type="submit" value="Enviar">
+         </form>
+   `);
+});
+// valida el nuevo password y lo agrega a la base
+/**
+ * @swagger
+ * /newPassword/{id}:
+ *  post:
+ *   summary: Envia un mensaje al email para restableser contraseña.
+ *   security:
+ *     - ApiKeyAuth: []   
+ *   tags: [Autenticacion] 
+ *   parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       schema:
+ *         type: integer
+ *         format: int64 
+ *   requestBody:
+ *     required: true
+ *     content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/Error' 
+ *          example: 
+ *            password: Gustavo.123
+ *            confirPass: Gustavo.123
+ * 
+ *   responses: 
+ *     200:    # status code
+ *        description: Respuesta de envio de correo
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Result'
+ *            example:
+ *              message: password updated successfully 
+ * 
+ *     404:    # status code
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Error'
+ *            example:
+ *              message: Current password is this
+ * 
+ *     401:    # status code
+ *        description: Not Found
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/Error'
+ *            example:
+ *              message: Access denied
+ * 
+ */
+
+router.post('/newPassword/:id', _acessToken.verifyToken, _authController.passNew);
 var _default = exports.default = router;

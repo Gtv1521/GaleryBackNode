@@ -1,8 +1,12 @@
 // componentes de aplicación
+import { fotoDelete } from "../../config/cloudinary";
 import pool from "../../config/dataBaseConect";
 
 const buscaNombre = async (nombre, id) => {
     return await pool.query('SELECT * FROM albums WHERE nombre_album = ? and user_id = ?', [nombre, id]);
+}
+const enlaceImg = async (album_id) => {
+    return await pool.query('SELECT id_url FROM imagenes WHERE album_id = ?', [album_id]);
 }
 
 // muestra todos los albunes de cada usuario
@@ -59,7 +63,7 @@ const albumNew = async (req, res) => {
                 (nombre_album, user_id) VALUES (?,?)`, [nombre, id]);
 
                 if (result.serverStatus === 2) {
-                    res.status(200).json({ nombre_album: nombre, id_user: id });
+                    res.status(200).json({ nombre_album: nombre, id_user: id, message: 'Album added successfully' });
                 }
             }
         }
@@ -77,19 +81,16 @@ const updateAlbum = async (req, res) => {
             res.status(404).json({ error: 'Send all data' });
         } else {
             const check = await buscaNombre(nombre, id); // verifica que no exista ese album
-            if (check.length > 0) {
+            console.log(check)
+            if (check.length === 0) {
                 const result = await pool.query('UPDATE albums SET nombre_album = ? WHERE id_album = ?', [nombre, id]);
-                if (result.serverStatus === 2) {
-                    if (result.changedRows === 1) {
-                        res.status(200).json({ id_album: id, nombre_album: nombre });
-                    } else {
-                        res.json({ message: 'The album have this name' }).status(304);
-                    }
+                if (result.serverStatus === 2 && result.changedRows === 1) {
+                    res.status(200).json({ status: 200, message: 'Album update successfully' });
                 } else {
-                    res.status(200).json({ message: 'The album does not exists' });
+                    res.status(200).json({ message: 'The album have this name' });
                 }
             } else {
-                res.status(404).json({ message: 'The album have this name' });
+                res.status(404).json({ message: 'The album does not exists' });
             }
         }
     } catch (error) {
@@ -104,14 +105,18 @@ const deleteAlbum = async (req, res) => {
         if (!id) {
             res.status(404).json({ error: 'id Not Found' });
         } else {
-            const delet = await pool.query(`DELETE FROM imagenes WHERE album_id = ?`, [id]);
+            const url_id = await enlaceImg(id);
+            for (let i = 0; url_id.length > i; i++) {
+                fotoDelete(url_id[i].id_url);
+                const delet = await pool.query(`DELETE FROM imagenes WHERE album_id = ? and id_url = ?`, [id, url_id[i].id_url]);
+            }
             const result = await pool.query(`DELETE FROM albums WHERE id_album = ?`, [id]);
             if (result.serverStatus === 2) {
                 res.status(200).json({ message: 'Album delete' });
             }
         }
     } catch (error) {
-        res.json({ message: 'Something went wrong' });
+        res.json(error);
     }
 };
 
