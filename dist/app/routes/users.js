@@ -150,6 +150,57 @@ const router = _express.default.Router();
  */
 router.get('/users', _acessToken.verifyToken, _userController.consultaUsers);
 
+/**
+ * @swagger
+ * /user/{id}:
+ *  get:
+ *   summary: Muestra todos los usuarios registrados.
+ *   security:
+ *     - ApiKeyAuth: []
+ *   tags: [Users]
+ *   parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       schema:
+ *         type: integer
+ *         format: int64    
+ *   description: Peticion para mostrar usuarios
+ *   responses:
+
+ *     '200':    # status code
+ *        description: Lista de usuarios
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Usuario'
+ *           example:
+ *             id: 36
+ *             nombre: Gustavo
+ *             username: Gustavo123
+ *             password: $2a$10$Fj5GVZ0b0y8sKK5fxpR.fuPzycOXt6HN23FgbrY2sGzDdsugoHEka
+ *             email: gustavober98@gmail.com
+ * 
+ *
+ *     '404':    # status code 
+ *        description: No hay usuarios  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             message: Not found     
+ *     '401':    # status code 
+ *        description:  Pasar token de acceso  
+ *        content:
+ *         application/json:
+ *           schema: 
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             message: Access denied                               
+ */
+router.get('/user/:id', _acessToken.verifyToken, _userController.consultarUser);
+
 // update data user 
 /**
  * @swagger

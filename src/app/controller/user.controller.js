@@ -17,6 +17,20 @@ const consultaUsers = async (req, res) => {
         res.json(error);
     }
 }
+const consultarUser = async (req, res) => {
+    try {
+        const { id } = req.params
+        const consultaUser = await pool.query(`SELECT * FROM usuarios WHERE id_user = ?`, [id]);
+        if (consultaUser.length > 0) {
+            res.status(200).json(consultaUser);
+        } else {
+            res.status(404).json({ message: 'There are no users' });
+        }
+
+    } catch (error) {
+        res.json(error);
+    }
+}
 // actualiza usuario con los datos que se le pasan
 const updateUsuario = async (nombre, username, id) => {
     return await pool.query(`UPDATE usuarios 
@@ -131,4 +145,4 @@ const updatePassword = async (req, res) => {
     }
 }
 
-export { consultaUsers, deleteUser, updateMail, updateUser, updatePassword }
+export { consultaUsers, consultarUser, deleteUser, updateMail, updateUser, updatePassword }

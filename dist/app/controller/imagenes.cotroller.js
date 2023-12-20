@@ -244,7 +244,7 @@ const verImagesAlbum = async (req, res) => {
       } else {
         res.json({
           status: 200,
-          message: 'no hay imagenes'
+          message: 'Not have Images'
         });
       }
     }

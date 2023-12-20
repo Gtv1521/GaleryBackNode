@@ -180,7 +180,7 @@ const verImagesAlbum = async (req, res) => {
             if (result.length > 0) {
                 res.json(result)
             } else {
-                res.json({ status: 200, message: 'no hay imagenes' })
+                res.json({ status: 200, message: 'Not have Images' })
             }
         }
     } catch (error) {

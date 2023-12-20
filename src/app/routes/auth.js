@@ -304,6 +304,7 @@ router.post('/sigin', sigIn);
 
 // router.post('/emailPass', sendEmail);
 
+
 router.get('/newPassword/:token/:id', async (req, res) => {
     const { token, id } = req.params;
     res.send(`

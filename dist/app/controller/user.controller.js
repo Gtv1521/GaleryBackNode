@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateUser = exports.updatePassword = exports.updateMail = exports.deleteUser = exports.consultaUsers = void 0;
+exports.updateUser = exports.updatePassword = exports.updateMail = exports.deleteUser = exports.consultarUser = exports.consultaUsers = void 0;
 var _dataBaseConect = _interopRequireDefault(require("../../config/dataBaseConect.js"));
 var _encriptado = require("../helpers/encriptado.js");
 var _authController = require("./auth.controller.js");
@@ -25,8 +25,26 @@ const consultaUsers = async (req, res) => {
     res.json(error);
   }
 };
-// actualiza usuario con los datos que se le pasan
 exports.consultaUsers = consultaUsers;
+const consultarUser = async (req, res) => {
+  try {
+    const {
+      id
+    } = req.params;
+    const consultaUser = await _dataBaseConect.default.query(`SELECT * FROM usuarios WHERE id_user = ?`, [id]);
+    if (consultaUser.length > 0) {
+      res.status(200).json(consultaUser);
+    } else {
+      res.status(404).json({
+        message: 'There are no users'
+      });
+    }
+  } catch (error) {
+    res.json(error);
+  }
+};
+// actualiza usuario con los datos que se le pasan
+exports.consultarUser = consultarUser;
 const updateUsuario = async (nombre, username, id) => {
   return await _dataBaseConect.default.query(`UPDATE usuarios 
         SET nombre_user = ?, userName = ? WHERE id_user = ?`, [nombre, username, id]);
