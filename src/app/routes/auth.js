@@ -202,7 +202,7 @@ router.post('/login', logIn);
  *          - username
  *          - password
  *      example:
- *          username: Gustavo123
+ *          username: Gus123
  *          password: Ilovereggae.17           
  */
 

@@ -54,7 +54,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /verImagesId/{id_user}:
+ * /verImagesId/{id_user}/{pagina}/{cantidad}:
  *  get:
  *   summary: Muestra todas los imagenes por usuario.
  *   security:
@@ -67,6 +67,18 @@ const router = express.Router();
  *       schema:
  *         type: integer
  *         format: int64
+ *     - in: path
+ *       name: pagina
+ *       required: true
+ *       scheme:
+ *          type: integer
+ *          format: int64
+ *     - in: path
+ *       name: cantidad
+ *       required: true
+ *       scheme:
+ *          type: integer
+ *          format: int64
  *   description: Peticion para mostrar imagenes
  *   responses:
  *     '200':    # status code
@@ -103,7 +115,7 @@ const router = express.Router();
  *           example:
  *             message: Access denied                               
  */
-router.get('/verImagesId/:id_user', verifyToken, verImagenesId);
+router.get('/verImagesId/:id_user/:pagina/:cantidad', verifyToken, verImagenesId);
 
 // Consulta una imagen
 /**

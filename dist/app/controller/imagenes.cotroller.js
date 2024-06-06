@@ -7,6 +7,7 @@ exports.verImagesAlbum = exports.verImagenesId = exports.verImage = exports.verA
 var _fsExtra = _interopRequireDefault(require("fs-extra"));
 var _dataBaseConect = _interopRequireDefault(require("../../config/dataBaseConect.js"));
 var _cloudinary = require("../../config/cloudinary.js");
+var _dotenv = require("dotenv");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 // librerias 
 
@@ -106,11 +107,21 @@ exports.verImage = verImage;
 const verImagenesId = async (req, res) => {
   try {
     const {
-      id_user
+      id_user,
+      pagina,
+      cantidad
     } = req.params;
-    const consutaImagenes = await _dataBaseConect.default.query(`SELECT * FROM imagenes WHERE user_id_img = ?`, [id_user]);
-    if (consutaImagenes.length !== 0) {
-      res.json(consutaImagenes);
+    const pagina1 = (pagina - 1) * cantidad;
+    const cantidad1 = Number.parseInt(cantidad, 10);
+    const total = await _dataBaseConect.default.query(`SELECT Count(id_img) AS Total FROM  imagenes WHERE  user_id_img = ?`, [id_user]);
+    const TotalPaginas = Math.ceil(total[0].Total / cantidad1);
+    const consultaImagenes = await _dataBaseConect.default.query(`SELECT * FROM imagenes WHERE user_id_img = ? order by id_img DESC LIMIT ?,?`, [id_user, pagina1, cantidad1]);
+    if (consultaImagenes.length !== 0) {
+      res.json({
+        PaginaActual: pagina,
+        consultaImagenes,
+        TotalPaginas
+      });
     } else {
       res.json({
         message: 'There are no images to show'
@@ -133,7 +144,7 @@ const verAllImagesAlbum = async (req, res) => {
       });
     } else {
       console.log();
-      const consutaImagenes = await _dataBaseConect.default.query(`SELECT * FROM imagenes  WHERE album_id = ?`, [album_id]);
+      const consutaImagenes = await _dataBaseConect.default.query(`SELECT * FROM imagenes  WHERE album_id = ? order by id_img DESC`, [album_id]);
       if (consutaImagenes.length !== 0) {
         res.json(consutaImagenes);
       } else {
@@ -238,7 +249,7 @@ const verImagesAlbum = async (req, res) => {
         message: 'Send all data'
       });
     } else {
-      const result = await _dataBaseConect.default.query('SELECT album_id, url_img FROM imagenes WHERE album_id = ? LIMIT 4', [album_id]);
+      const result = await _dataBaseConect.default.query('SELECT album_id, url_img FROM imagenes WHERE album_id = ? order by id_img DESC LIMIT 4', [album_id]);
       if (result.length > 0) {
         res.json(result);
       } else {

@@ -59,7 +59,7 @@ const router = _express.default.Router();
  */
 /**
  * @swagger
- * /verImagesId/{id_user}:
+ * /verImagesId/{id_user}/{pagina}/{cantidad}:
  *  get:
  *   summary: Muestra todas los imagenes por usuario.
  *   security:
@@ -72,6 +72,18 @@ const router = _express.default.Router();
  *       schema:
  *         type: integer
  *         format: int64
+ *     - in: path
+ *       name: pagina
+ *       required: true
+ *       scheme:
+ *          type: integer
+ *          format: int64
+ *     - in: path
+ *       name: cantidad
+ *       required: true
+ *       scheme:
+ *          type: integer
+ *          format: int64
  *   description: Peticion para mostrar imagenes
  *   responses:
  *     '200':    # status code
@@ -108,7 +120,7 @@ const router = _express.default.Router();
  *           example:
  *             message: Access denied                               
  */
-router.get('/verImagesId/:id_user', _acessToken.verifyToken, _imagenesCotroller.verImagenesId);
+router.get('/verImagesId/:id_user/:pagina/:cantidad', _acessToken.verifyToken, _imagenesCotroller.verImagenesId);
 
 // Consulta una imagen
 /**

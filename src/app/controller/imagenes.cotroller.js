@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 // componentes de la aplicación
 import pool from "../../config/dataBaseConect.js";
 import { fotoUpload, fotoDelete } from '../../config/cloudinary.js';
+import { config } from 'dotenv';
 
 // consulta de imagenes por id
 const consultaImg = async (id) => {
@@ -78,10 +79,15 @@ const verImage = async (req, res) => {
 // ver imagenes por Usuario GET
 const verImagenesId = async (req, res) => {
     try {
-        const { id_user } = req.params;
-        const consutaImagenes = await pool.query(`SELECT * FROM imagenes WHERE user_id_img = ?`, [id_user]);
-        if (consutaImagenes.length !== 0) {
-            res.json(consutaImagenes);
+        const { id_user, pagina, cantidad } = req.params;
+        const pagina1 = (pagina - 1) * cantidad
+        const cantidad1 = Number.parseInt(cantidad, 10)
+        const total = await pool.query(`SELECT Count(id_img) AS Total FROM  imagenes WHERE  user_id_img = ?`, [id_user])
+
+        const TotalPaginas = Math.ceil(total[0].Total / cantidad1)
+        const consultaImagenes = await pool.query(`SELECT * FROM imagenes WHERE user_id_img = ? order by id_img DESC LIMIT ?,?`, [id_user, pagina1, cantidad1]);
+        if (consultaImagenes.length !== 0) {
+            res.json({ PaginaActual: pagina, consultaImagenes, TotalPaginas });
         } else {
             res.json({ message: 'There are no images to show' });
         }
@@ -97,7 +103,7 @@ const verAllImagesAlbum = async (req, res) => {
             res.json({ message: 'Send all data' });
         } else {
             console.log()
-            const consutaImagenes = await pool.query(`SELECT * FROM imagenes  WHERE album_id = ?`, [album_id]);
+            const consutaImagenes = await pool.query(`SELECT * FROM imagenes  WHERE album_id = ? order by id_img DESC`, [album_id]);
             if (consutaImagenes.length !== 0) {
                 res.json(consutaImagenes);
             } else {
@@ -176,7 +182,7 @@ const verImagesAlbum = async (req, res) => {
         if (!album_id) {
             res.json({ message: 'Send all data' })
         } else {
-            const result = await pool.query('SELECT album_id, url_img FROM imagenes WHERE album_id = ? LIMIT 4', [album_id])
+            const result = await pool.query('SELECT album_id, url_img FROM imagenes WHERE album_id = ? order by id_img DESC LIMIT 4', [album_id])
             if (result.length > 0) {
                 res.json(result)
             } else {
